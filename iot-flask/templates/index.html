@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+   <head>
+      <title>{{ serverName }}</title>
+      <link rel="stylesheet" href="../static/style.css/">
+   </head>
+   <body>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+      <h1>IOT Seminar</h1>
+      <h2>Server date/time is: {{ serverTime }}</h2>
+
+
+    <h3>channels</h3>
+        
+    {% if mqttDict is defined %}
+    <form action="/toggleButton" method="post">
+        {% for item,value in mqttDict.items() %}
+        item: {{ item }}: {{value}}
+
+        {% if value == True %}
+            <a href={{ item }}/toggle class="button">TURN OFF</a>
+            <input type="submit" name="{{item}}", value="TURN OFF 2">  
+        {% elif value == False %}
+            <a href={{ item }}/toggle class="button">TURN ON</a>  
+            <input type="submit" name="{{item}}", value="TURN ON 2">  
+        {% endif %}
+
+        <BR>
+
+        {% endfor %}
+    </form>
+    {% endif %}
+    
+    <!-- plotly -->
+    {% for id in ids %}
+        <h3>{{id}}</h3>
+        <div id="{{id}}"></div>
+    {% endfor %}
+
+    </body>
+
+   <footer>
+    <script type="text/javascript">
+
+        var graphs = {{graphJSON | safe}};
+        var ids = {{ids | safe}};
+
+        for(var i in graphs) {
+            Plotly.plot(ids[i], // the ID of the div, created above
+                        graphs[i].data,
+                        graphs[i].layout || {});
+        }
+
+    </script>
+
+   </footer>
+</html>
+
